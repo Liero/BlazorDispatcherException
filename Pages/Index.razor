@@ -1,0 +1,27 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+
+<button @onclick="Click" type="button">Click to crash</button>
+
+<div style="height: 200px">
+    <Virtualize TItem="Person" @ref="_virtualize" Items="Array.Empty<Person>()" />
+</div>
+<div>    
+    RenderTime: @DateTime.Now.ToString()
+</div>
+
+@code {
+    record Person(string Name);
+    Virtualize<Person>? _virtualize { get; set; }
+
+    void Click()
+    {
+        new Thread(() =>
+        {
+            _virtualize!.RefreshDataAsync().Wait();
+            StateHasChanged();
+        }).Start();    
+    }
+}
